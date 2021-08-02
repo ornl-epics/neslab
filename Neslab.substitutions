@@ -1,0 +1,7 @@
+file Neslab.template
+{
+pattern {S}
+        {CG3:SE:NESLAB}
+}
+
+

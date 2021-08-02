@@ -1,0 +1,393 @@
+##############################################################
+#READS
+##############################################################
+
+
+
+##############################################################
+#Sequence for Read Hardware
+###############################################################
+record(seq, "$(S):ReadSeq") {
+  field(SCAN, "10 second")
+  field(LNK1,"$(S):SPReadRaw.PROC")
+  field(DO1, "1")
+  field(DLY1, "0.4")
+  field(LNK2,"$(S):TempReadRaw.PROC")
+  field(DO2, "1")
+  field(DLY2, "0.4")
+  field(LNK3,"$(S):FlowReadRaw.PROC")
+  field(DO3, "1")
+  field(DLY3, "0.4")
+  field(LNK4,"$(S):Status.PROC")
+  field(DO4, "1")
+  field(DLY4, "0.4")
+  field(LNK5,"$(S):TempReadRawE.PROC")
+  field(DO5, "1")
+  field(DLY5, "0.4")
+  field(LNK6,"$(S):LFAReadRaw.PROC")
+  field(DO6, "1")
+  field(DLY6, "0.4")
+  field(LNK7,"$(S):HFAReadRaw.PROC")
+  field(DO7, "1")
+  field(DLY7, "0.4")
+  field(LNK9,"$(S):HTAReadRaw.PROC")
+  field(DO9, "1")
+  field(DLY9, "0.4")
+  field(LNKA,"$(S):LTAReadRaw.PROC")
+  field(DOA, "1")
+  field(DLYA, "0.4")
+  field(FLNK, "$(S):ReadSeq2")
+}
+
+
+record(seq, "$(S):ReadSeq2") {
+  field(LNKA,"$(S):SPWriteM.PROC")
+  field(DOA, "1")
+  field(DLYA, "0.4")
+
+}
+##################
+##Setpoint Read
+###################
+
+
+
+record(longin, "$(S):SPReadRaw") {
+  info(DESC, "Read the setpoint")
+  field(DTYP, "stream")
+  field(INP, "@Neslab.proto getSP1($(S):SPReadRawQ) commsN")
+}
+
+record(ai, "$(S):SPReadRawQ") {
+  info(DESC, "Qualifier")
+}
+
+
+record(calcout, "$(S):SPReadRawC") {
+  info(DESC, "Get precision")
+  field(INPA, "$(S):SPReadRaw CPP")
+  field(INPB, "$(S):SPReadRawQ")
+  field(CALC, "A/((B>>4)*10)")
+  field(OUT, "$(S):SPRead CA")
+}
+
+record(ai, "$(S):SPRead"){
+  info(DESC, "Read of Actual SetPoint")
+  field(PREC, "0")
+  info(archive, "Monitor, 00:00:01, VAL")
+  field(EGU, "C")
+}
+
+record(calc, "$(S):SPReadF") {
+  info(DESC, "Read Setpoint in F")
+  field(INPA, "$(S):SPRead CPP")
+  field(CALC, "(A)") 
+  info(archive, "Monitor, 00:00:01, VAL")
+  field(PREC, "0")
+  field(EGU, "C")
+}
+#####################
+#Temperature Read Internal
+#####################
+record(ai, "$(S):TempReadRaw") {
+  info(DESC, "Read the Temperature")
+  field(DTYP, "stream")
+  field(INP, "@Neslab.proto getTEMP1($(S):TempReadRawQ) commsN")
+}
+
+record(ai, "$(S):TempReadRawQ") {
+  info(DESC, "Qualifier")
+}
+
+
+record(calcout, "$(S):TempReadRawC") {
+  info(DESC, "Get precision")
+  field(INPA, "$(S):TempReadRaw CPP")
+#  field(INPB, "$(S):TemmpReadRawQ")
+  field(CALC, "A/10")
+  field(OUT, "$(S):TempRead CA")
+}
+
+record(ai, "$(S):TempRead"){
+  info(DESC, "Read of Actual temp")
+  field(PREC, "0")
+  field(EGU, "C")
+  info(archive, "Monitor, 00:00:01, VAL")
+}
+
+##########################
+#Temp Read External
+##########################
+
+record(ai, "$(S):TempReadRawE") {
+  info(DESC, "Read the Temperature External")
+  field(DTYP, "stream")
+  field(INP, "@Neslab.proto getTEMPE1($(S):TempReadRawQE) commsN")
+}
+
+record(ai, "$(S):TempReadRawQE") {
+  info(DESC, "Qualifier")
+}
+
+
+record(calcout, "$(S):TempReadRawCE") {
+  info(DESC, "Get precision")
+  field(INPA, "$(S):TempReadRawE CPP")
+#  field(INPB, "$(S):TemmpReadRawQE")
+  field(CALC, "A/10")
+  field(OUT, "$(S):TempReadE CA")
+}
+
+record(ai, "$(S):TempReadE"){
+  info(DESC, "Read of Actual temp External")
+  field(PREC, "0")
+  field(EGU, "F")
+  info(archive, "Monitor, 00:00:01, VAL")
+}
+
+
+#####################
+##Flow Read
+######################
+record(ai, "$(S):FlowReadRaw") {
+  info(DESC, "Read the Flow")
+  field(DTYP, "stream")
+  field(INP, "@Neslab.proto getFLOW1($(S):FlowReadRawQ) commsN")
+  info(archive, "Monitor, 00:00:01, VAL")
+}
+
+record(ai, "$(S):FlowReadRawQ") {
+  info(DESC, "Qualifier")
+}
+
+
+record(calcout, "$(S):FlowReadRawC") {
+  info(DESC, "Get precision")
+  field(INPA, "$(S):FlowReadRaw CPP")
+  field(INPB, "$(S):FlowReadRawQ")
+  field(CALC, "A/10")
+  field(OUT, "$(S):FlowRead CA")
+}
+
+record(ai, "$(S):FlowRead"){
+   info(DESC, "Read of Actual Flow")
+   field(PREC, "0")
+   field(EGU, "")
+   info(archive, "Monitor, 00:00:01, VAL")
+}
+
+###########################
+#Low Flow Alarm Read
+##########################
+record(ai, "$(S):LFAReadRaw") {
+  info(DESC, "Read Low Flow Alarm")
+  field(DTYP, "stream")
+  field(INP, "@Neslab.proto getLFA($(S):LFAReadRawQ) commsN")
+}
+
+record(ai, "$(S):LFAReadRawQ") {
+  info(DESC, "Qualifier")
+}
+
+
+record(calcout, "$(S):LFAReadRawC") {
+  info(DESC, "Get precision")
+  field(INPA, "$(S):LFAReadRaw CPP")
+  field(INPB, "$(S):LFAReadRawQ")
+  field(CALC, "A/10")
+  field(OUT, "$(S):LFARead CA")
+}
+
+record(ai, "$(S):LFARead"){
+   info(DESC, "Read of Actual Low Flow Alarm")
+   field(PREC, "0")
+   field(EGU, "")
+   info(archive, "Monitor, 00:00:01, VAL")
+}
+
+##############################
+#Read High Flow Alarm
+##############################
+
+record(ai, "$(S):HFAReadRaw") {
+  info(DESC, "Read High Flow Alarm")
+  field(DTYP, "stream")
+  field(INP, "@Neslab.proto getHFA($(S):HFAReadRawQ) commsN")
+}
+
+record(ai, "$(S):HFAReadRawQ") {
+  info(DESC, "Qualifier")
+}
+
+
+record(calcout, "$(S):HFAReadRawC") {
+  info(DESC, "Get precision")
+  field(INPA, "$(S):HFAReadRaw CPP")
+  field(INPB, "$(S):HFAReadRawQ")
+  field(CALC, "A/10")
+  field(OUT, "$(S):HFARead CA")
+}
+
+record(ai, "$(S):HFARead"){
+   info(DESC, "Read of Actual High Flow Alarm")
+   field(PREC, "0")
+   field(EGU, "")
+   info(archive, "Monitor, 00:00:01, VAL")
+}
+
+################################
+#Read High Temp Alarm
+################################
+record(ai, "$(S):HTAReadRaw") {
+  info(DESC, "Read High Temp Alarm")
+  field(DTYP, "stream")
+  field(INP, "@Neslab.proto getHTAA() commsN")
+}
+
+record(calcout, "$(S):HTAReadRawC") {
+  info(DESC, "Get precision")
+  field(INPA, "$(S):HTAReadRaw CPP")
+  field(CALC, "((A/10))")
+  field(OUT, "$(S):HTARead CA")
+}
+
+record(ai, "$(S):HTARead"){
+   info(DESC, "Read of High Temp Alarm")
+   field(PREC, "0")
+   field(EGU, "C")
+   info(archive, "Monitor, 00:00:01, VAL")
+}
+
+##################################
+#Low Temperature ALARM
+##################################
+
+record(ai, "$(S):LTAReadRaw") {
+  info(DESC, "Read Low Temp Alarm")
+  field(DTYP, "stream")
+  field(INP, "@Neslab.proto getLTA($(S):LTAReadRawQ) commsN")
+}
+
+record(ai, "$(S):LTAReadRawQ") {
+  info(DESC, "Qualifier")
+}
+
+
+record(calcout, "$(S):LTAReadRawC") {
+  info(DESC, "Get precision")
+  field(INPA, "$(S):LTAReadRaw CPP")
+  field(INPB, "$(S):LTAReadRawQ")
+  field(CALC, "(A/10)")
+  field(OUT, "$(S):LTARead CA")
+}
+
+record(ai, "$(S):LTARead"){
+   info(DESC, "Read of Low Temp Alarm")
+   field(PREC, "0")
+   field(EGU, "C")
+   info(archive, "Monitor, 00:00:01, VAL")
+}
+
+
+#######################
+###Status Read
+#######################
+record(mbbi, "$(S):Status") {
+  info(DESC, "Check for errors")
+  field(DTYP, "stream")
+  field(INP, "@Neslab.proto getSTATUSA() commsN")
+  field(NOBT, "16")
+  field(ZRVL, "0")
+  field(ONVL, "1")
+  field(TWVL, "2")
+  field(THVL, "4")
+  field(FRVL, "8")
+  field(FVVL, "16")
+  field(SXVL, "32")
+  field(SVVL, "64")
+  field(EIVL, "128")
+  field(NIVL, "256")
+  field(TEVL, "512")
+  field(ELVL, "1024")
+  field(TVVL, "2048")
+  field(TTVL, "4096")
+  field(FTVL, "8192")
+  field(FFVL, "16384")
+  field(ZRST, "OFF")
+  field(ONST, "ON")
+  field(TWST, "RTD1 OPEN")
+  field(THST, "RTD2 OPEN")
+  field(FRST, "RTD3 OPEN")
+  field(FVST, "High Temp Fixed")
+  field(SXST, "Low Temp Fixed")
+  field(SVST, "High Temp")
+  field(EIST, "Low Temp")
+  field(NIST, "High Press")
+  field(TEST, "Low Press")
+  field(ELST, "Drip Pan")
+  field(TVST, "High Level")
+  field(TTST, "Phase Monitor")
+  field(FTST, "Motor Overload")
+  field(FFST, "LPC")
+  info(archive, "Monitor, 00:00:01, VAL")
+}
+
+record(bo, "$(S):AlarmEnable") {
+  field(ZNAM, "Disable")
+  field(ONAM, "Enabled")
+  field(ZSV, "MINOR")
+}
+
+
+
+record(calc, "$(S):GlobalAlarm"){
+  info(DESC, "Global Alarm")
+  field(INPA, "$(S):Status.RVAL CPP")
+  field(INPB, "$(S):AlarmEnable CPP")
+  field(CALC, "(A>1)&B")
+  field(HIGH, "1")
+  info(archive, "Monitor, 00:00:01, VAL")
+}
+
+#############################################################
+#Writes
+#############################################################
+#SET SP for Temprerature
+#############################################################
+record(longout, "$(S):SPWrite") {
+  info(DESC, "Write the setpoint")
+  info(archive, "Monitor, 00:00:01, VAL")
+  info(autosaveFields, "VAL")
+
+}
+
+
+#Write when not in tolerance between sp and sp readback
+record(calcout, "$(S):SPWriteM") {
+  info(DESC, "Multiply sp by 10 and resend")
+  field(INPA, "$(S):SPWrite")
+#  field(INPB, "$(S):SPReadF")
+  field(CALC, "ABS(A-B)>=0.9?(A*10):A")
+  field(OOPT, "When Non-zero")
+  field(OUT, "@Neslab.proto setSPD commsN")
+  field(DTYP, "stream")
+  info(archive, "Monitor, 00:00:01, VAL")
+}
+
+##########################################################
+#Set Chiller ON or OFF
+##########################################################
+
+
+record(bo, "$(S):ChillerOFF") {
+  info(DESC, "Set Chiller OFF")
+  field(OUT, "@Neslab.proto setOFF commsN")
+  field(DTYP, "stream")
+  field(HIGH, "0.1")
+  info(archive, "Monitor, 00:00:01, VAL")
+}
+
+
+
+
+

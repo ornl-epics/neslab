@@ -1,0 +1,94 @@
+ReplyTimeout = 400;
+locktimeout = 500;
+readtimeout  = 400;
+extrainput   = Ignore;
+
+
+getFware{
+	out "%B\xCA\xAA%B\x00\xAA%B\x01\xAA%B\x70\xAA%B\x00\xAA%B\x00\x8E";
+	in "%s";
+}
+
+getSP1{
+	out "\xCA\x00\x01\x70\x00%1<~sum>";
+	in "\xCA\x00\x01\x70\x03%(\$1)01r%02r";
+}
+
+
+
+getTEMP1{
+        out "\xCA\x00\x01\x20\x00%1<~sum>";
+        in "\xCA\x00\x01\x20\x03%(\$1)01r%02r";
+}
+
+
+getTEMPE1{
+        out "\xCA\x00\x01\x21\x00%1<~sum>";
+        in "\xCA\x00\x01\x21\x03%(\$1)01r%02r";
+}
+
+
+getFLOW1{
+        out "\xCA\x00\x01\x10\x00%1<~sum>";
+        in "\xCA\x00\x01\x10\x03%(\$1)01r%02r";
+}
+
+
+getLFA{
+        out "\xCA\x00\x01\x30\x00%1<~sum>";
+        in "\xCA\x00\x01\x30\x03%(\$1)01r%02r";
+}
+
+
+getHFA{
+        out "\xCA\x00\x01\x50\x00%1<~sum>";
+        in "\xCA\x00\x01\x50\x03%(\$1)01r%02r";
+}
+
+
+
+getHTAA{
+        out "\xCA\x00\x01\x60\x00%1<~sum>";
+        in "\xCA\x00\x01\x60\x03%*01r%02r";
+
+}
+
+
+getLTA{
+        out "\xCA\x00\x01\x40\x00%1<~sum>";
+        in "\xCA\x00\x01\x40\x03%(\$1)01r%02r";
+}
+
+
+
+
+#little indian to show on and off on the first bit. 
+#D4 from command reference not needed because the other
+#errors are included
+
+getSTATUSA{
+        ReplyTimeout = 10000;
+        out "\xCA\x00\x01\x09\x00%1<~sum>";
+        in "\xCA\x00\x01\x09\x04%#03r";
+}
+
+##########################################################
+#Writes
+##########################################################
+
+setSP1{
+        out "\xCA\x00\x01\xF0\x02%(A)1r%(B)1r%1<~sum>";
+        in "\xCA\x00\x01\xF0\x02\%02r";
+}
+
+setSPD{
+        out "\xCA\x00\x01\xF0\x02%.02r%1<~sum>";
+        in "\xCA\x00\x01\xF0\x02\%02r";
+}
+
+
+setOFF{
+        out "\xCA\x00\x01\x81\x01\x00%1<~sum>";
+        in "\xCA\x00\x01\x81\x03\%02r";
+}
+
